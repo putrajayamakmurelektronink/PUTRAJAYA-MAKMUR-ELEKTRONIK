@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUTRAJAYA MAKMUR ELEKTRONIK</title>
+<meta name="description" content="Toko alat telekomunikasi terpercaya - Modem, Router, Antena, dan perangkat telekomunikasi berkualitas">
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+      },
+      colors: {
+        primary: {
+          50: '#f0f5ff', 100: '#e0ebff', 200: '#c2d8ff', 300: '#93b8ff',
+          400: '#5a8fff', 500: '#3b6de8', 600: '#2a52c5', 700: '#1f3f9e',
+          800: '#1e357f', 900: '#1d3169',
+        },
+      },
+    },
+  },
+}
+</script>
+
+<style>
+:root {
+  --bg-primary: #ffffff; --bg-secondary: #f8f9fa; --bg-card: #ffffff;
+  --bg-glass: rgba(255,255,255,0.7); --text-primary: #1a1a2e;
+  --text-secondary: #6c757d; --text-muted: #adb5bd;
+  --border: rgba(0,0,0,0.06); --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.06); --shadow-lg: 0 8px 40px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 40px rgba(59,109,232,0.15); --accent: #3b6de8;
+  --accent-soft: #e0ebff; --gradient-1: #3b6de8; --gradient-2: #5a8fff;
+  --gradient-3: #93b8ff; --cursor-x: 50%; --cursor-y: 50%;
+}
+.dark {
+  --bg-primary: #0f1115; --bg-secondary: #16181d; --bg-card: #1a1d24;
+  --bg-glass: rgba(26,29,36,0.7); --text-primary: #f1f3f5;
+  --text-secondary: #adb5bd; --text-muted: #6c757d;
+  --border: rgba(255,255,255,0.06); --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.3); --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 40px rgba(59,109,232,0.25); --accent: #5a8fff;
+  --accent-soft: rgba(90,143,255,0.15); --gradient-1: #5a8fff;
+  --gradient-2: #93b8ff; --gradient-3: #c2d8ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif; background: var(--bg-primary);
+  color: var(--text-primary); overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+.cursor-glow {
+  position: fixed; width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,109,232,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+  left: var(--cursor-x); top: var(--cursor-y);
+  transition: left 0.15s ease-out, top 0.15s ease-out; will-change: transform;
+}
+.ambient-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.ambient-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 20s ease-in-out infinite; }
+.ambient-orb:nth-child(1) { width: 400px; height: 400px; background: var(--gradient-1); top: -10%; left: -5%; animation-delay: 0s; }
+.ambient-orb:nth-child(2) { width: 300px; height: 300px; background: var(--gradient-2); bottom: 10%; right: -5%; animation-delay: -7s; }
+.ambient-orb:nth-child(3) { width: 250px; height: 250px; background: var(--gradient-3); top: 40%; left: 60%; animation-delay: -14s; }
+@keyframes float {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  25% { transform: translate(30px,-30px) scale(1.1); }
+  50% { transform: translate(-20px,20px) scale(0.95); }
+  75% { transform: translate(15px,15px) scale(1.05); }
+}
+.glass {
+  background: var(--bg-glass); backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--border);
+}
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 1rem 0;
+}
+.navbar.scrolled {
+  background: var(--bg-glass); backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-md); padding: 0.6rem 0;
+}
+.hero-section { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.hero-gradient { position: absolute; inset: 0; background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 50%, var(--gradient-3) 100%); opacity: 0.08; animation: gradientShift 15s ease infinite; }
+@keyframes gradientShift { 0%, 100% { opacity: 0.08; transform: scale(1); } 50% { opacity: 0.12; transform: scale(1.1); } }
+.hero-content { position: relative; z-index: 2; }
+.btn-fluid {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5rem; padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 1rem; font-weight: 600; font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  letter-spacing: 0.01em; cursor: pointer; border: none; outline: none;
+  overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-fluid::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2)); opacity: 0; transition: opacity 0.3s ease; border-radius: inherit; }
+.btn-fluid:hover::before { opacity: 1; }
+.btn-fluid:hover { transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-glow); }
+.btn-fluid:active { transform: translateY(0) scale(0.98); }
+.btn-fluid span { position: relative; z-index: 1; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); transform: scale(0); animation: rippleAnim 0.6s ease-out; pointer-events: none; }
+@keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+.product-card { position: relative; background: var(--bg-card); border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.product-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: var(--shadow-lg), var(--shadow-glow); border-color: var(--accent-soft); }
+.product-card .card-image { position: relative; overflow: hidden; aspect-ratio: 4/3; }
+.product-card .card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.product-card:hover .card-image img { transform: scale(1.08); }
+.product-card .sold-out-badge { position: absolute; top: 1rem; right: 1rem; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.4rem 0.8rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(239,68,68,0.3); z-index: 2; }
+.product-card .discount-badge { position: absolute; top: 1rem; left: 1rem; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.4rem 0.8rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; z-index: 2; }
+.price-original { text-decoration: line-through; color: var(--text-muted); font-size: 0.85rem; }
+.price-discount { color: var(--accent); font-weight: 700; font-size: clamp(1.1rem, 2vw, 1.3rem); }
+.modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content { background: var(--bg-card); border-radius: 1.5rem; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transform: scale(0.9) translateY(20px); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+.modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+.carousel-container { position: relative; overflow: hidden; border-radius: 1rem; }
+.carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.carousel-slide { min-width: 100%; aspect-ratio: 16/9; position: relative; }
+.carousel-slide img, .carousel-slide video { width: 100%; height: 100%; object-fit: cover; }
+.carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: all 0.2s ease; z-index: 10; }
+.carousel-nav:hover { background: var(--accent); color: white; transform: translateY(-50%) scale(1.1); }
+.carousel-prev { left: 1rem; } .carousel-next { right: 1rem; }
+.carousel-dots { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+.carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); cursor: pointer; transition: all 0.3s ease; }
+.carousel-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+.theme-toggle { position: relative; width: 48px; height: 26px; border-radius: 13px; background: var(--text-muted); cursor: pointer; transition: background 0.3s ease; border: none; outline: none; }
+.theme-toggle.active { background: var(--accent); }
+.theme-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.theme-toggle.active::after { transform: translateX(22px); }
+.reveal { opacity: 0; transform: translateY(30px); }
+.reveal.visible { opacity: 1; transform: translateY(0); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.skeleton { background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border) 50%, var(--bg-secondary) 75%); background-size: 200% 100%; animation: skeleton 1.5s ease-in-out infinite; border-radius: 0.5rem; }
+@keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.mobile-menu { position: fixed; inset: 0; z-index: 999; background: var(--bg-glass); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.mobile-menu.active { opacity: 1; visibility: visible; }
+.mobile-menu a { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); text-decoration: none; transition: color 0.2s ease; }
+.mobile-menu a:hover { color: var(--accent); }
+.hamburger { width: 28px; height: 20px; position: relative; cursor: pointer; display: none; flex-direction: column; justify-content: space-between; }
+.hamburger span { display: block; width: 100%; height: 2.5px; background: var(--text-primary); border-radius: 2px; transition: all 0.3s ease; }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+@media (max-width: 768px) { .hamburger { display: flex; } .nav-links { display: none; } .cursor-glow { display: none; } .carousel-nav { width: 36px; height: 36px; } .carousel-prev { left: 0.5rem; } .carousel-next { right: 0.5rem; } }
+@media (min-width: 769px) and (max-width: 1024px) { .cursor-glow { display: none; } }
+@media (min-width: 2560px) { html { font-size: 18px; } }
+.zoom-container { position: relative; overflow: hidden; cursor: zoom-in; }
+.zoom-container img { transition: transform 0.3s ease; }
+.zoom-container:hover img { transform: scale(1.5); }
+.section-padding { padding: clamp(3rem, 8vw, 8rem) clamp(1rem, 5vw, 3rem); }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.footer-link { color: var(--text-secondary); text-decoration: none; transition: color 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+.footer-link:hover { color: var(--accent); }
+.admin-btn { background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2)); color: white; padding: 0.5rem 1rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; }
+.admin-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 1.5rem; box-shadow: var(--shadow-lg); z-index: 3000; transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.toast.show { transform: translateY(0); opacity: 1; }
+</style>
+<base target="_blank">
+</head>
+
+<body class="font-inter antialiased">
+
+<!-- CURSOR GLOW -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- AMBIENT BACKGROUND -->
+<div class="ambient-bg">
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+    <div class="flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg group-hover:shadow-primary-500/30 transition-shadow">
+          <img id="navLogo" src="https://res.cloudinary.com/dyytw4pjh/image/upload/w_80,h_80,c_fill/putra-jaya-logo.png" alt="Logo" class="w-full h-full object-cover" loading="eager">
+        </div>
+        <span id="navStoreName" class="font-poppins font-bold text-lg tracking-tight text-[var(--text-primary)]">Putra Jaya</span>
+      </a>
+     
+      <div class="flex items-center gap-4">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"></button>
+
+        </a>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#Home" onclick="closeMobileMenu()">Home</a>
+  <a href="https://wa.me/628111982477" onclick="closeMobileMenu()">Kontak</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section id="home" class="hero-section section-padding pt-24">
+  <div class="hero-gradient"></div>
+  <div class="hero-content w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 text-center">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 reveal">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        <span class="text-sm font-medium text-[var(--text-secondary)]">Toko Elektronik Terpercaya</span>
+      </div>
+      <h1 class="font-poppins font-bold text-[clamp(2.5rem,6vw,5rem)] leading-[1.1] tracking-tight mb-6 reveal" style="transition-delay:0.1s">
+        Solusi <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-400">Telekomunikasi</span><br>Modern & Premium
+      </h1>
+      <p class="text-[clamp(1rem,2vw,1.25rem)] text-[var(--text-secondary)] max-w-2xl mx-auto mb-10 leading-relaxed reveal" style="transition-delay:0.2s">
+        Kami menyediakan perangkat telekomunikasi berkualitas tinggi dengan harga kompetitif. Modem, router, antena, dan aksesoris terbaik untuk kebutuhan connectivity Anda.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 reveal" style="transition-delay:0.3s">
+        <a href="#products" class="btn-fluid bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25">
+          <span>Lihat Produk</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://wa.me/6281234567890" class="btn-fluid bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border)]">
+          <span>WhatsApp kami</span>
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-3xl mx-auto reveal" style="transition-delay:0.4s">
+      <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl font-bold text-[var(--accent)]">80+</div><div class="text-xs text-[var(--text-secondary)] mt-1">Produk Tersedia</div></div>
+      <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl font-bold text-[var(--accent)]">1000+</div><div class="text-xs text-[var(--text-secondary)] mt-1">Pelanggan Puas</div></div>
+      <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl font-bold text-[var(--accent)]">10+</div><div class="text-xs text-[var(--text-secondary)] mt-1">Brand</div></div>
+      <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl font-bold text-[var(--accent)]">9+</div><div class="text-xs text-[var(--text-secondary)] mt-1">Tahun Pengalaman</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section id="products" class="section-padding relative z-10">
+  <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+    <div class="text-center mb-12 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[var(--accent-soft)] text-[var(--accent)] mb-4">KATALOG PRODUK</span>
+      <h2 class="font-poppins font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight mb-4">Pilihan Produk <span class="text-[var(--accent)]">Terbaik</span></h2>
+      <p class="text-[var(--text-secondary)] max-w-xl mx-auto">Temukan perangkat telekomunikasi berkualitas dengan harga terbaik</p>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+    <div id="productsLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="skeleton h-80 rounded-2xl"></div>
+      <div class="skeleton h-80 rounded-2xl"></div>
+      <div class="skeleton h-80 rounded-2xl"></div>
+      <div class="skeleton h-80 rounded-2xl"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="section-padding relative z-10 bg-[var(--bg-secondary)]">
+  <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[var(--accent-soft)] text-[var(--accent)] mb-4">TENTANG KAMI</span>
+        <h2 class="font-poppins font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight mb-6">PUTRAJAYA MAKMUR<span class="text-[var(--accent)]">Elektronik</span></h2>
+        <p class="text-[var(--text-secondary)] leading-relaxed mb-6">Kami adalah toko telekomunikasi terpercaya yang menyediakan berbagai perangkat berkualitas tinggi. Dari modem, router, antena, hingga aksesoris telekomunikasi lainnya.</p>
+        <p class="text-[var(--text-secondary)] leading-relaxed mb-8">Dengan pengalaman lebih dari 9 tahun, kami berkomitmen memberikan pelayanan terbaik dan produk berkualitas untuk memenuhi kebutuhan connectivity Anda.</p>
+        <div class="flex flex-wrap gap-4">
+          <div class="flex items-center gap-3 glass rounded-xl px-4 py-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div><div class="font-semibold text-sm">Garansi</div><div class="text-xs text-[var(--text-muted)]">Semua produk</div></div>
+          </div>
+          <div class="flex items-center gap-3 glass rounded-xl px-4 py-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div><div class="font-semibold text-sm">Pengiriman Cepat</div><div class="text-xs text-[var(--text-muted)]">Seluruh Indonesia</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s">
+        <div class="relative">
+          <div class="absolute -inset-4 bg-gradient-to-r from-primary-500 to-primary-300 rounded-3xl opacity-20 blur-2xl"></div>
+          <img id="aboutImage" src="https://res.cloudinary.com/dyytw4pjh/image/upload/w_600,h_500,c_fill,q_auto/putra-jaya-store.jpg" alt="Toko Putra Jaya" class="relative rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="section-padding relative z-10">
+  <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+    <div class="text-center mb-12 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[var(--accent-soft)] text-[var(--accent)] mb-4">HUBUNGI KAMI</span>
+      <h2 class="font-poppins font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight mb-4">Cara <span class="text-[var(--accent)]">Mudah</span> Bertransaksi</h2>
+      <p class="text-[var(--text-secondary)] max-w-xl mx-auto">Pilih cara yang paling nyaman untuk Anda</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div class="reveal glass rounded-2xl p-6 text-center group hover:border-primary-300 transition-all duration-300" style="transition-delay:0.1s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/20 group-hover:scale-110 transition-transform">
+          <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">WhatsApp</h3>
+        <p class="text-sm text-[var(--text-secondary)] mb-4">Chat langsung untuk pemesanan cepat</p>
+        <a id="waBtn" href="https://wa.me/628111982477?text=Halo%20Putra%20Jaya%2C%20saya%20ingin%20memesan%3A" target="_blank" rel="noopener" class="btn-fluid w-full bg-gradient-to-r from-green-500 to-green-600 text-white"><span>Chat WhatsApp</span></a>
+      </div>
+      <div class="reveal glass rounded-2xl p-6 text-center group hover:border-primary-300 transition-all duration-300" style="transition-delay:0.2s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/20 group-hover:scale-110 transition-transform">
+          <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">Email</h3>
+        <p class="text-sm text-[var(--text-secondary)] mb-4">Kirim pertanyaan via Gmail</p>
+        <a id="gmailBtn" href="https://mail.google.com/mail/?view=cm&fs=1&to=putrajayamakmurelektronink@gmail.com&su=Tanya%20Produk&body=Halo%20saya%20ingin%20bertanya%20apakah%20produk%20ini%20masih%20tersedia?" target="_blank" rel="noopener" class="btn-fluid w-full bg-gradient-to-r from-red-500 to-red-600 text-white"><span>Kirim Email</span></a>
+      </div>
+      <div class="reveal glass rounded-2xl p-6 text-center group hover:border-primary-300 transition-all duration-300" style="transition-delay:0.3s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+          <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">Kunjungi Toko</h3>
+        <p class="text-sm text-[var(--text-secondary)] mb-4">Datang langsung ke lokasi kami</p>
+        <a id="mapsBtn" href="https://maps.app.goo.gl/XUJVeJfPgDhzU5Ma6" target="_blank" rel="noopener" class="btn-fluid w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"><span>Lihat Lokasi</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="relative z-10 border-t border-[var(--border)] bg-[var(--bg-secondary)]">
+  <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-12">
+    <div class="grid md:grid-cols-3 gap-8 items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+            <img id="footerLogo" src="https://res.cloudinary.com/dyytw4pjh/image/upload/w_80,h_80,c_fill/putra-jaya-logo.png" alt="Logo" class="w-full h-full object-cover">
+          </div>
+          <span id="footerStoreName" class="font-poppins font-bold text-lg">Putra Jaya Makmur Elektronik</span>
+        </div>
+        <p class="text-sm text-[var(--text-secondary)] leading-relaxed">Toko telekomunikasi terpercaya dengan produk berkualitas dan pelayanan terbaik.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Kontak</h4>
+        <div class="space-y-3">
+          <a id="footerWa" href="https://wa.me/628111982477?text=Halo%20Putra%20Jaya%2C%20saya%20ingin%20memesan%3A" target="_blank" rel="noopener" class="footer-link text-sm">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <span id="footerPhone">0811-1982-477</span>
+          </a>
+          <a id="footerGmail" href="https://mail.google.com/mail/?view=cm&fs=1&to=putrajayamakmurelektronink@gmail.com&su=Tanya%20Produk&body=Halo%20saya%20ingin%20bertanya%20apakah%20produk%20ini%20masih%20tersedia?" target="_blank" rel="noopener" class="footer-link text-sm">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <span id="footerEmail">putrajayamakmurelektronink@gmail.com</span>
+          </a>
+          <a id="footerMaps" href="https://maps.app.goo.gl/XUJVeJfPgDhzU5Ma6" target="_blank" rel="noopener" class="footer-link text-sm">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span id="footerAddress">14 blok GS No, Grandkahuripan Rinjani No.21, Cijujung, Kec. Sukaraja, Kabupaten Bogor, Jawa Barat 16710</span>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Menu</h4>
+        <div class="space-y-2">
+          <a href="#home" class="footer-link text-sm block">Home</a>
+          <a href="#products" class="footer-link text-sm block">Produk</a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-[var(--border)] mt-8 pt-8 text-center">
+      <p class="text-sm text-[var(--text-muted)]">&copy; <span id="footerYear">2026</span> <span id="footerBrand">Putra Jaya Makmur Elektronik</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== PRODUCT MODAL ===== -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full glass flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-white transition-all z-10">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="p-6 md:p-8">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <div class="carousel-container rounded-2xl overflow-hidden bg-[var(--bg-secondary)]" id="modalCarousel">
+            <div class="carousel-track" id="carouselTrack"></div>
+            <button class="carousel-nav carousel-prev" onclick="prevSlide()">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button class="carousel-nav carousel-next" onclick="nextSlide()">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="carousel-dots" id="carouselDots"></div>
+          <p class="text-xs text-[var(--text-muted)] text-center mt-2">Swipe untuk navigasi &middot; Klik gambar untuk zoom</p>
+        </div>
+        <div class="flex flex-col">
+          <span id="modalCategory" class="inline-block self-start px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-soft)] text-[var(--accent)] mb-3">Modem</span>
+          <h3 id="modalTitle" class="font-poppins font-bold text-2xl md:text-3xl mb-3">Huawei B311 Router 4G</h3>
+          <p id="modalDesc" class="text-[var(--text-secondary)] text-sm leading-relaxed mb-4">Router 4G LTE dengan kecepatan hingga 150Mbps. Support semua operator Indonesia.</p>
+          <div class="flex items-baseline gap-3 mb-4">
+            <span id="modalPrice" class="price-discount">Rp 450.000</span>
+            <span id="modalPriceOriginal" class="price-original">Rp 600.000</span>
+            <span id="modalDiscount" class="px-2 py-0.5 rounded-lg bg-green-100 text-green-700 text-xs font-bold">-25%</span>
+          </div>
+          <div class="flex items-center gap-2 mb-6">
+            <span class="text-sm text-[var(--text-secondary)]">Stok:</span>
+            <span id="modalStock" class="font-semibold text-sm">15 unit</span>
+            <span id="modalStockBadge" class="px-2 py-0.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold">Tersedia</span>
+          </div>
+          <div class="space-y-3 mt-auto">
+            <a id="modalWaBtn" href="#" target="_blank" rel="noopener" class="btn-fluid w-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20">
+              <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <span>Pesan via WhatsApp</span>
+            </a>
+            <div class="grid grid-cols-2 gap-3">
+              <a id="modalMapsBtn" href="#" target="_blank" rel="noopener" class="btn-fluid bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border)]">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                <span>Lokasi</span>
+              </a>
+              <a id="modalGmailBtn" href="#" target="_blank" rel="noopener" class="btn-fluid bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border)]">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Email</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+  <div class="flex items-center gap-3">
+    <svg width="20" height="20" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMessage" class="text-sm font-medium">Produk berhasil ditambahkan</span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// FIREBASE CONFIG - GANTI DENGAN CONFIG ASLI LU
+// ============================================================
+// Cara dapetin config:
+// 1. Buka Firebase Console: https://console.firebase.google.com
+// 2. Buat project baru atau pilih project yang udah ada
+// 3. Klik ikon gear (Settings) -> Project settings
+// 4. Scroll ke bawah ke bagian "Your apps" -> pilih Web app
+// 5. Copy config object yang ada di situ
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBcgNEvmun77zGGukr2A7sHtMIJmiB_z0c",
+  authDomain: "putrajayamakmurelektroni-9cfa1.firebaseapp.com",
+  projectId: "putrajayamakmurelektroni-9cfa1",
+  storageBucket: "putrajayamakmurelektroni-9cfa1.firebasestorage.app",
+  messagingSenderId: "275449957534",
+  appId: "1:275449957534:web:85d041d8811f51ba83ff8f"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ============================================================
+// CLOUDINARY CONFIG - GANTI DENGAN CONFIG ASLI LU
+// ============================================================
+// Cara setup Cloudinary:
+// 1. Buka https://cloudinary.com -> Sign up
+// 2. Dapetin Cloud Name dari Dashboard
+// 3. Upload gambar ke Media Library
+// 4. Copy Public ID dari gambar
+// 5. URL format: https://res.cloudinary.com/{cloudName}/image/upload/{transforms}/{publicId}
+// ============================================================
+const CLOUDINARY_CONFIG = {
+  cloudName: "dyytw4pjh", // GANTI: contoh "putrajaya"
+};
+
+function getCloudinaryUrl(publicId, options = {}) {
+  const { width, height, crop = 'fill', quality = 'auto', format = 'auto' } = options;
+  let transforms = [];
+  if (width) transforms.push(`w_${width}`);
+  if (height) transforms.push(`h_${height}`);
+  if (crop) transforms.push(`c_${crop}`);
+  if (quality) transforms.push(`q_${quality}`);
+  if (format) transforms.push(`f_${format}`);
+  const transformStr = transforms.length > 0 ? transforms.join(',') + '/' : '';
+  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/${transformStr}${publicId}`;
+}
+
+// ============================================================
+// STORE DATA STATE (Realtime from Firestore)
+// ============================================================
+let storeData = {
+  storeName: "PutraJaya Makmur Elektronik",
+  shortName: "PutraJaya",
+  logoUrl: "https://res.cloudinary.com/dyytw4pjh/image/upload/w_80,h_80,c_fill/putra-jaya-logo.png",
+  phone: "628111982477",
+  email: "putrajayamakmurelektronink@gmail.com",
+  address: "14 blok GS No, Grandkahuripan Rinjani No.21, Cijujung, Kec. Sukaraja, Kabupaten Bogor, Jawa Barat 16710",
+  mapsUrl: "https://maps.app.goo.gl/XUJVeJfPgDhzU5Ma6",
+  waMessage: "halo saya ingin bertanya",
+  gmailSubject: "Tanya Produk",
+  gmailBody: "Halo saya ingin bertanya apakah produk ini masih tersedia?",
+  aboutImage: "https://res.cloudinary.com/dyytw4pjh/image/upload/w_600,h_500,c_fill,q_auto/putra-jaya-store.jpg"
+};
+
+let products = [];
+let currentProduct = null;
+let currentSlide = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
+// ============================================================
+// REALTIME LISTENERS
+// ============================================================
+function initRealtimeListeners() {
+  // Listen store settings
+  db.collection("settings").doc("store").onSnapshot((doc) => {
+    if (doc.exists) {
+      storeData = { ...storeData, ...doc.data() };
+      updateStoreUI();
+    }
+  }, (err) => {
+    console.log("Firestore settings error (using defaults):", err);
+    updateStoreUI();
+  });
+
+  // Listen products
+  db.collection("products").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+    products = [];
+    snapshot.forEach((doc) => {
+      products.push({ id: doc.id, ...doc.data() });
+    });
+    renderProducts();
+  }, (err) => {
+    console.log("Firestore products error (using demo data):", err);
+    loadDemoProducts();
+  });
+}
+
+// ============================================================
+// UPDATE UI WITH REALTIME DATA
+// ============================================================
+function updateStoreUI() {
+  const navLogo = document.getElementById('navLogo');
+  const navStoreName = document.getElementById('navStoreName');
+  if (navLogo) navLogo.src = storeData.logoUrl;
+  if (navStoreName) navStoreName.textContent = storeData.shortName || storeData.storeName;
+
+  const footerLogo = document.getElementById('footerLogo');
+  const footerStoreName = document.getElementById('footerStoreName');
+  const footerBrand = document.getElementById('footerBrand');
+  const footerPhone = document.getElementById('footerPhone');
+  const footerEmail = document.getElementById('footerEmail');
+  const footerAddress = document.getElementById('footerAddress');
+  const aboutImage = document.getElementById('aboutImage');
+
+  if (footerLogo) footerLogo.src = storeData.logoUrl;
+  if (footerStoreName) footerStoreName.textContent = storeData.storeName;
+  if (footerBrand) footerBrand.textContent = storeData.storeName;
+  if (footerPhone) footerPhone.textContent = formatPhone(storeData.phone);
+  if (footerEmail) footerEmail.textContent = storeData.email;
+  if (footerAddress) footerAddress.textContent = storeData.address;
+  if (aboutImage) aboutImage.src = storeData.aboutImage;
+
+  updateContactLinks();
+}
+
+function formatPhone(phone) {
+  if (!phone) return '';
+  let p = phone.replace(/\D/g, '');
+  if (p.startsWith('0')) p = '62' + p.slice(1);
+  if (p.startsWith('62')) {
+    return p.replace(/(\d{2})(\d{3})(\d{4})(\d{4})/, '$1-$2-$3-$4');
+  }
+  return phone;
+}
+
+function updateContactLinks() {
+  const phone = storeData.phone || '628111982477';
+  const waMsg = encodeURIComponent(storeData.waMessage || 'Halo Putra Jaya, saya ingin memesan:');
+  const email = storeData.email || 'putrajayamakmurelektronink@gmail.com';
+  const subject = encodeURIComponent(storeData.gmailSubject || 'Tanya Produk');
+  const body = encodeURIComponent(storeData.gmailBody || 'Halo saya ingin bertanya apakah produk ini masih tersedia?');
+  const maps = storeData.mapsUrl || 'https://share.google/KOOF1kWqKhUOIOy3W';
+  // Update hero WA button
+  const heroWaBtn = document.getElementById('heroWaBtn');
+if (heroWaBtn) heroWaBtn.href = `https://wa.me/${phone}?text=${waMsg}`;
+
+  const waBtn = document.getElementById('waBtn');
+  const gmailBtn = document.getElementById('gmailBtn');
+  const mapsBtn = document.getElementById('mapsBtn');
+
+  if (waBtn) waBtn.href = `https://wa.me/${phone}?text=${waMsg}`;
+  if (gmailBtn) gmailBtn.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+  if (mapsBtn) mapsBtn.href = maps;
+
+  const footerWa = document.getElementById('footerWa');
+  const footerGmail = document.getElementById('footerGmail');
+  const footerMaps = document.getElementById('footerMaps');
+
+  if (footerWa) footerWa.href = `https://wa.me/${phone}?text=${waMsg}`;
+  if (footerGmail) footerGmail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+  if (footerMaps) footerMaps.href = maps;
+}
+
+// ============================================================
+// DEMO PRODUCTS (Fallback when Firestore fails)
+// ============================================================
+function loadDemoProducts() {
+  products = [
+    {
+      id: "demo1",
+      name: "Huawei B311 Router 4G",
+      description: "Router 4G LTE dengan kecepatan hingga 150Mbps. Support semua operator Indonesia. Cocok untuk rumah dan kantor kecil.",
+      price: 450000,
+      priceOriginal: 600000,
+      stock: 15,
+      category: "Modem",
+      images: ["https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: false
+    },
+    {
+      id: "demo2",
+      name: "TP-Link Archer C6 Router WiFi 6",
+      description: "Router dual-band AC1200 dengan teknologi WiFi 6. Coverage luas untuk rumah 2 lantai.",
+      price: 350000,
+      priceOriginal: 450000,
+      stock: 8,
+      category: "Router",
+      images: ["https://images.unsplash.com/photo-1543395659-14a51f2a5a22?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: false
+    },
+    {
+      id: "demo3",
+      name: "Antena Yagi 15dBi 4G LTE",
+      description: "Antena directional high gain 15dBi untuk penguat sinyal 4G LTE. Support frekuensi 700-2700MHz.",
+      price: 280000,
+      priceOriginal: 350000,
+      stock: 0,
+      category: "Antena",
+      images: ["https://images.unsplash.com/photo-1563770095-39d468f9579a?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: true
+    },
+    {
+      id: "demo4",
+      name: "MikroTik hAP ac²",
+      description: "Routerboard dual-concurrent dengan 5 Gigabit Ethernet ports. Support PoE output.",
+      price: 850000,
+      priceOriginal: 1100000,
+      stock: 5,
+      category: "Router",
+      images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: false
+    },
+    {
+      id: "demo5",
+      name: "ZTE MF90 Modem Mifi 4G",
+      description: "Modem Mifi portable 4G LTE dengan baterai 2300mAh. Support hingga 10 device.",
+      price: 320000,
+      priceOriginal: 400000,
+      stock: 22,
+      category: "Modem",
+      images: ["https://images.unsplash.com/photo-1551703599-6b3e8379aa8c?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: false
+    },
+    {
+      id: "demo6",
+      name: "Kabel LAN Cat6 50 Meter",
+      description: "Kabel LAN UTP Cat6 high quality. Support gigabit ethernet. Sudah dilengkapi RJ45 connector.",
+      price: 150000,
+      priceOriginal: 200000,
+      stock: 50,
+      category: "Aksesoris",
+      images: ["https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"],
+      videos: [],
+      soldOut: false
+    }
+  ];
+  renderProducts();
+}
+
+// ============================================================
+// RENDER PRODUCTS
+// ============================================================
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const loading = document.getElementById('productsLoading');
+  if (loading) loading.style.display = 'none';
+  if (!grid) return;
+
+  grid.innerHTML = products.map((product, index) => {
+    const discount = product.priceOriginal ? Math.round((1 - product.price / product.priceOriginal) * 100) : 0;
+    const isSoldOut = product.stock <= 0 || product.soldOut;
+    const stockText = isSoldOut ? 'Habis' : product.stock + ' unit';
+    const stockColor = isSoldOut ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+
+    return `
+      <div class="product-card reveal" style="transition-delay:${index * 0.1}s" onclick="openProductModal('${product.id}')">
+        <div class="card-image">
+          <img src="${product.images?.[0] || 'https://via.placeholder.com/400x300'}" alt="${product.name}" loading="lazy">
+          ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
+          ${isSoldOut ? `<div class="sold-out-badge">Sold Out</div>` : ''}
+        </div>
+        <div class="p-5">
+          <span class="text-xs font-semibold text-[var(--accent)] bg-[var(--accent-soft)] px-2 py-1 rounded-lg">${product.category || 'Produk'}</span>
+          <h3 class="font-semibold text-lg mt-2 mb-1 line-clamp-1">${product.name}</h3>
+          <p class="text-sm text-[var(--text-secondary)] line-clamp-2 mb-3">${product.description || ''}</p>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="price-discount">${formatRupiah(product.price)}</span>
+            ${product.priceOriginal ? `<span class="price-original">${formatRupiah(product.priceOriginal)}</span>` : ''}
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-[var(--text-secondary)]">Stok: <span class="font-semibold">${stockText}</span></span>
+            <span class="text-xs px-2 py-0.5 rounded-lg ${stockColor} font-semibold">${isSoldOut ? 'Habis' : 'Tersedia'}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Re-trigger reveal animations
+  setTimeout(() => {
+    document.querySelectorAll('.product-card.reveal').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 100);
+}
+
+function formatRupiah(num) {
+  return 'Rp ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// ============================================================
+// PRODUCT MODAL
+// ============================================================
+function openProductModal(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  currentProduct = product;
+  currentSlide = 0;
+
+  document.getElementById('modalTitle').textContent = product.name;
+  document.getElementById('modalDesc').textContent = product.description || '';
+  document.getElementById('modalCategory').textContent = product.category || 'Produk';
+  document.getElementById('modalPrice').textContent = formatRupiah(product.price);
+  document.getElementById('modalPriceOriginal').textContent = product.priceOriginal ? formatRupiah(product.priceOriginal) : '';
+  document.getElementById('modalPriceOriginal').style.display = product.priceOriginal ? 'inline' : 'none';
+
+  const discount = product.priceOriginal ? Math.round((1 - product.price / product.priceOriginal) * 100) : 0;
+  const discountEl = document.getElementById('modalDiscount');
+  if (discountEl) {
+    discountEl.textContent = discount > 0 ? `-${discount}%` : '';
+    discountEl.style.display = discount > 0 ? 'inline-block' : 'none';
+  }
+
+  const isSoldOut = product.stock <= 0 || product.soldOut;
+  document.getElementById('modalStock').textContent = isSoldOut ? 'Habis' : product.stock + ' unit';
+  const stockBadge = document.getElementById('modalStockBadge');
+  stockBadge.textContent = isSoldOut ? 'Habis' : 'Tersedia';
+  stockBadge.className = `px-2 py-0.5 rounded-lg text-xs font-semibold ${isSoldOut ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+
+  // Build carousel
+  const track = document.getElementById('carouselTrack');
+  const dots = document.getElementById('carouselDots');
+  const allMedia = [...(product.images || []), ...(product.videos || [])];
+
+  track.innerHTML = allMedia.map((media, i) => `
+    <div class="carousel-slide ${i === 0 ? 'zoom-container' : ''}">
+      ${media.endsWith('.mp4') || media.includes('video') ?
+        `<video src="${media}" controls class="w-full h-full object-cover"></video>` :
+        `<img src="${media}" alt="${product.name} ${i+1}" class="w-full h-full object-cover">`
+      }
+    </div>
+  `).join('');
+
+  dots.innerHTML = allMedia.map((_, i) => `
+    <div class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>
+  `).join('');
+
+  updateCarouselPosition();
+
+  // Update modal action buttons with product-specific message
+  const phone = storeData.phone || '628111982477';
+  const waMsg = encodeURIComponent(`${storeData.waMessage || 'Halo Putra Jaya, saya ingin memesan:'} ${product.name}`);
+  const email = storeData.email || 'putrajayamakmurelektronink@gmail.com';
+  const subject = encodeURIComponent(`Tanya Produk: ${product.name}`);
+  const body = encodeURIComponent(`Halo, saya ingin bertanya tentang produk ${product.name}. Apakah masih tersedia?`);
+  const maps = storeData.mapsUrl || 'https://share.google/KOOF1kWqKhUOIOy3W';
+
+  document.getElementById('modalWaBtn').href = `https://wa.me/${phone}?text=${waMsg}`;
+  document.getElementById('modalGmailBtn').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+  document.getElementById('modalMapsBtn').href = maps;
+
+  document.getElementById('productModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Setup swipe
+  const carousel = document.getElementById('modalCarousel');
+  carousel.addEventListener('touchstart', handleTouchStart, {passive: true});
+  carousel.addEventListener('touchend', handleTouchEnd, {passive: true});
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('active');
+  document.body.style.overflow = '';
+  const carousel = document.getElementById('modalCarousel');
+  carousel.removeEventListener('touchstart', handleTouchStart);
+  carousel.removeEventListener('touchend', handleTouchEnd);
+}
+
+function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
+function handleTouchEnd(e) {
+  touchEndX = e.changedTouches[0].screenX;
+  if (touchStartX - touchEndX > 50) nextSlide();
+  if (touchEndX - touchStartX > 50) prevSlide();
+}
+
+function nextSlide() {
+  const allMedia = [...(currentProduct?.images || []), ...(currentProduct?.videos || [])];
+  currentSlide = (currentSlide + 1) % allMedia.length;
+  updateCarouselPosition();
+}
+
+function prevSlide() {
+  const allMedia = [...(currentProduct?.images || []), ...(currentProduct?.videos || [])];
+  currentSlide = (currentSlide - 1 + allMedia.length) % allMedia.length;
+  updateCarouselPosition();
+}
+
+function goToSlide(index) {
+  currentSlide = index;
+  updateCarouselPosition();
+}
+
+function updateCarouselPosition() {
+  const track = document.getElementById('carouselTrack');
+  if (track) track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+  document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentSlide);
+  });
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function initDarkMode() {
+  const toggle = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.classList.add('dark');
+    toggle.classList.add('active');
+  }
+
+  toggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    toggle.classList.toggle('active');
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  });
+}
+
+// ============================================================
+// NAVBAR SCROLL
+// ============================================================
+function initNavbar() {
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  }, { passive: true });
+}
+
+// ============================================================
+// MOBILE MENU
+// ============================================================
+function initMobileMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    menu.classList.toggle('active');
+  });
+}
+
+function closeMobileMenu() {
+  document.getElementById('hamburger').classList.remove('active');
+  document.getElementById('mobileMenu').classList.remove('active');
+}
+
+// ============================================================
+// CURSOR GLOW
+// ============================================================
+function initCursorGlow() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  const glow = document.getElementById('cursorGlow');
+  let rafId = null;
+  let mouseX = 50, mouseY = 50;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!rafId) {
+      rafId = requestAnimationFrame(() => {
+        glow.style.setProperty('--cursor-x', mouseX + 'px');
+        glow.style.setProperty('--cursor-y', mouseY + 'px');
+        rafId = null;
+      });
+    }
+  }, { passive: true });
+}
+
+// ============================================================
+// RIPPLE EFFECT
+// ============================================================
+function initRippleEffect() {
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('.btn-fluid');
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+}
+
+// ============================================================
+// SCROLL REVEAL (GSAP)
+// ============================================================
+function initScrollReveal() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Reveal elements
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.8,
+        delay: el.style.transitionDelay ? parseFloat(el.style.transitionDelay) : i * 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      }
+    );
+  });
+
+  // Parallax for hero
+  gsap.to('.hero-gradient', {
+    yPercent: 30,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.hero-section',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMessage').textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function initProductScroll() {
+  const lihatProdukBtn = document.querySelector('a[href="#products"]');
+  if (lihatProdukBtn) {
+    lihatProdukBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        const navbarHeight = document.getElementById('navbar').offsetHeight || 80;
+        const targetPosition = productsSection.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  }
+}
+    
+// ============================================================
+// KEYBOARD NAVIGATION
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (document.getElementById('productModal').classList.contains('active')) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initDarkMode();
+  initNavbar();
+  initMobileMenu();
+  initCursorGlow();
+  initRippleEffect();
+  initScrollReveal();
+  initRealtimeListeners();
+  initProductScroll();
+
+  // Set footer year
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+  // Close modal on overlay click
+  document.getElementById('productModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+});
+</script>
+
+</body>
+</html>
